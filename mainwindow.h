@@ -139,6 +139,8 @@ private:
     QCandlestickSeries *_reviewSeriesVolume = nullptr;
     QChartView *_reviewChartView = nullptr;
 
+    quint64 _lastIDKLine = 0;
+
     int _sessionID = 0;
 };
 #endif // MAINWINDOW_H

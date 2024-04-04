@@ -37,9 +37,9 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${PROJECT_SOURCES}
         ${COMMON_FILES}
         resurce.qrc
-        logindialog.h logindialog.cpp logindialog.ui
 
-        usermessage.h usermessage.cpp usermessage.ui
+
+
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET TraidingCatBotClient APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -68,7 +68,7 @@ target_link_libraries(TradingCatClient PRIVATE
 )
 
 target_link_options(TradingCatClient PRIVATE "SHELL:-s FORCE_FILESYSTEM=1 ")
-target_link_options(TradingCatClient PUBLIC -sASYNCIFY -Os -sFETCH -sMAXIMUM_MEMORY=512MB)
+target_link_options(TradingCatClient PUBLIC -sASYNCIFY -O2 -sFETCH -sMAXIMUM_MEMORY=1024MB)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/../../Common)
 

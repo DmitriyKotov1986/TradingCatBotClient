@@ -9,6 +9,7 @@
         <file>img/182507_cat_walk_icon.png</file>
         <file>img/kucoin.png</file>
         <file>img/gate.png</file>
+        <file>img/bybit.png</file>
     </qresource>
     <qresource prefix="/image">
         <file>img/decrease.png</file>

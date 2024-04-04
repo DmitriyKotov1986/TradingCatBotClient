@@ -10,14 +10,10 @@
 #include <QDoubleSpinBox>
 #include <QRandomGenerator64>
 
-#include <limits.h>
-
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
-#include "logindialog.h"
 #include "Common/common.h"
-#include "usermessage.h"
 
 using namespace Common;
 
@@ -511,6 +507,10 @@ QComboBox *MainWindow::makeStockExchangeComboBox(const QString &stockExchange) c
         {
             stockExchangeComboBox->addItem(QIcon(":/icon/img/gate.png"), existKLines_it.key());
         }
+        else if (existKLines_it.key() == "BYBIT")
+        {
+            stockExchangeComboBox->addItem(QIcon(":/icon/img/bybit.png"), existKLines_it.key());
+        }
         else
         {
             stockExchangeComboBox->addItem(existKLines_it.key());
@@ -803,6 +803,19 @@ void MainWindow::addKLines(const QJsonArray &jsonKLineList)
     {
         addKLine(jsonKLineList.at(i).toObject());
     }
+
+    if (jsonKLineList.count() != 0)
+    {
+        const auto item = ui->eventsList->item(ui->eventsList->count() - 1);
+        const auto id = item->data(Qt::UserRole);
+        const auto klines_it = _klines.find(id.toULongLong());
+        Q_ASSERT(klines_it != _klines.end());
+
+        showChart(*klines_it.value());
+        showReviewChart(*klines_it.value());
+
+        ui->eventsList->setCurrentItem(item);
+    }
 }
 
 void MainWindow::addKLine(const QJsonObject &jsonKLine)
@@ -859,8 +872,8 @@ void MainWindow::addKLine(const QJsonObject &jsonKLine)
         kline->reviewHistory.emplaceBack(std::move(tmp));
     }
 
-    const  quint64 id = _klines.size();
-    _klines.insert(id, kline);
+    ++_lastIDKLine;
+    _klines.insert(_lastIDKLine, kline);
 
     const QString text = QString("%1->%2 Interval: %3 Delta=%4 Volume=%5")
                              .arg(kline->stockExchangeID.name)
@@ -870,7 +883,7 @@ void MainWindow::addKLine(const QJsonObject &jsonKLine)
                              .arg(kline->volume);
 
     auto item = new QListWidgetItem(text);
-    item->setData(Qt::UserRole, id);
+    item->setData(Qt::UserRole, _lastIDKLine);
     if (kline->stockExchangeID.name == "MEXC")
     {
         item->setForeground(Qt::yellow);
@@ -883,6 +896,10 @@ void MainWindow::addKLine(const QJsonObject &jsonKLine)
     {
         item->setForeground(QColor(153, 193, 241));
     }
+    else if (kline->stockExchangeID.name == "BYBIT")
+    {
+        item->setForeground(QColor(192, 97, 203));
+    }
 
     if (kline->history.first().open <= kline->history.first().close)
     {
@@ -894,10 +911,21 @@ void MainWindow::addKLine(const QJsonObject &jsonKLine)
     }
 
     ui->eventsList->addItem(item);
-    ui->eventsList->setCurrentItem(item);
 
-    showChart(*kline);
-    showReviewChart(*kline);
+    if (ui->eventsList->count() > 100)
+    {
+        for (int i = 0; i < 2; ++i)
+        {
+            const auto item = ui->eventsList->takeItem(i);
+            const auto id = item->data(Qt::UserRole);
+            if (!id.isNull())
+            {
+                const auto klines_it = _klines.find(id.toULongLong());
+                delete klines_it.value();
+                _klines.erase(klines_it);
+            }
+        }
+    }
 }
 
 void MainWindow::showChart(const KLineData &klineData)

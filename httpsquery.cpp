@@ -119,6 +119,8 @@ void downloadSucceeded(emscripten_fetch_t *fetch)
     tmp.addTime = QDateTime::currentDateTime();
     addAnswerResult(*(int*)(fetch->userData), std::move(tmp));
 
+    delete (int*)fetch->userData;
+
     emscripten_fetch_close(fetch); // Free data associated with the fetch.
 }
 
@@ -129,6 +131,8 @@ void downloadFailed(emscripten_fetch_t *fetch)
     tmp.msg = QString("Error code: %1 URL: %2").arg(fetch->status).arg(fetch->url);
 
     addErrorResult(*(int*)(fetch->userData), std::move(tmp));
+
+    delete (int*)fetch->userData;
 
     emscripten_fetch_close(fetch); // Also free data on failure.
 }
