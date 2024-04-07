@@ -511,6 +511,10 @@ QComboBox *MainWindow::makeStockExchangeComboBox(const QString &stockExchange) c
         {
             stockExchangeComboBox->addItem(QIcon(":/icon/img/bybit.png"), existKLines_it.key());
         }
+        else if (existKLines_it.key() == "BINANCE")
+        {
+            stockExchangeComboBox->addItem(QIcon(":/icon/img/binance.png"), existKLines_it.key());
+        }
         else
         {
             stockExchangeComboBox->addItem(existKLines_it.key());
@@ -899,6 +903,10 @@ void MainWindow::addKLine(const QJsonObject &jsonKLine)
     else if (kline->stockExchangeID.name == "BYBIT")
     {
         item->setForeground(QColor(192, 97, 203));
+    }
+    else if (kline->stockExchangeID.name == "BINANCE")
+    {
+        item->setForeground(QColor(46, 194, 126));
     }
 
     if (kline->history.first().open <= kline->history.first().close)
