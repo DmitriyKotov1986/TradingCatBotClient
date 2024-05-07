@@ -38,6 +38,9 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(ui->eventsList, SIGNAL(itemClicked(QListWidgetItem *)),
                      SLOT(eventList_itemClicked(QListWidgetItem *)));
 
+    QObject::connect(ui->eventsList, SIGNAL(itemDoubleClicked(QListWidgetItem *)),
+                     SLOT(eventList_itemDoubleClicked(QListWidgetItem *)));
+
     QObject::connect(ui->detectorSplitter, SIGNAL(splitterMoved(int, int)),
                      SLOT(detectorSplitter_splitterMoved(int, int)));
 
@@ -249,6 +252,23 @@ void MainWindow::eventList_itemClicked(QListWidgetItem *item)
 
     showChart(*_klines.value(item->data(Qt::UserRole).toULongLong()));
     showReviewChart(*_klines.value(item->data(Qt::UserRole).toULongLong()));
+}
+
+void MainWindow::eventList_itemDoubleClicked(QListWidgetItem *item)
+{
+    if (item->data(Qt::UserRole).isNull())
+    {
+        return;
+    }
+
+    if (item->data(Qt::UserRole + 1).toUInt() == static_cast<quint8>(EventType::INCREASE))
+    {
+        item->setIcon(QIcon(":/image/img/increase_star.png"));
+    }
+    else if (item->data(Qt::UserRole + 1).toUInt() == static_cast<quint8>(EventType::DECREASE))
+    {
+        item->setIcon(QIcon(":/image/img/decrease_star.png"));
+    }
 }
 
 void MainWindow::detectorSplitter_splitterMoved(int pos, int index)
@@ -912,10 +932,12 @@ void MainWindow::addKLine(const QJsonObject &jsonKLine)
     if (kline->history.first().open <= kline->history.first().close)
     {
         item->setIcon(QIcon(":/image/img/increase.png"));
+        item->setData(Qt::UserRole + 1, static_cast<quint8>(EventType::INCREASE));
     }
     else
     {
         item->setIcon(QIcon(":/image/img/decrease.png"));
+        item->setData(Qt::UserRole + 1, static_cast<quint8>(EventType::DECREASE));
     }
 
     ui->eventsList->addItem(item);

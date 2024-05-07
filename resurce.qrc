@@ -24,5 +24,8 @@
         <file>img/remove2.png</file>
         <file>img/ok.png</file>
         <file>img/info.png</file>
+        <file>img/182507_cat_walk_icon.png</file>
+        <file>img/decrease_star.png</file>
+        <file>img/increase_star.png</file>
     </qresource>
 </RCC>

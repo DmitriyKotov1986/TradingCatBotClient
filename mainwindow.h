@@ -36,6 +36,13 @@ private:
         DATA = 5
     };
 
+    enum class EventType: quint8
+    {
+        INCREASE = 1,
+        DECREASE = 2,
+        UNDEFINE = 0
+    };
+
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
@@ -50,6 +57,7 @@ private slots:
     void errorOccurredHttp(quint32 code, const QString& msg, int id);
 
     void eventList_itemClicked(QListWidgetItem *item);
+    void eventList_itemDoubleClicked(QListWidgetItem *item);
     void detectorSplitter_splitterMoved(int pos, int index);
 
     void addPushButton_clicked();
